@@ -466,10 +466,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::movimientoP
   velocidad: 5
+  fuerzaSalto: 5
   capaSuelo:
     serializedVersion: 2
+    m_Bits: 8
+  distanciaSuelo: 0.2
+  capaInteractuable:
+    serializedVersion: 2
     m_Bits: 0
-  distancia: 1
+  distanciaInteractuable: 3
 --- !u!136 &1112520574
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -573,7 +578,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1112520572}
   serializedVersion: 5
-  m_Mass: 1
+  m_Mass: 5
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
