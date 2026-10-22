@@ -9,7 +9,7 @@ public class movimientoP : MonoBehaviour
 
     
     [SerializeField] private LayerMask capaSuelo;
-    [SerializeField] private float distanciaSuelo=0.2f;
+    [SerializeField] private float distanciaSuelo=1f;
     private bool estaEnSuelo = false;
 
     [SerializeField] private LayerMask capaInteractuable;
@@ -25,7 +25,10 @@ public class movimientoP : MonoBehaviour
     void Update()
     {
         RaycastHit hitSuelo;
-        if(Physics.Raycast(transform.position, Vector3.down, out hitSuelo, distanciaSuelo, capaSuelo))
+        Debug.DrawRay(transform.position, Vector3.down * distanciaSuelo, Color.red);
+
+        estaEnSuelo = Physics.Raycast(transform.position, Vector3.down, distanciaSuelo, capaSuelo);
+        if (estaEnSuelo)
         {
             estaEnSuelo = true;
             Debug.Log("El jugador está tocando el suelo");
@@ -58,7 +61,7 @@ public class movimientoP : MonoBehaviour
             if (Physics.Raycast(transform.position, transform.forward, out hitInteractuable, distanciaInteractuable, capaInteractuable))
             {
                 Debug.Log("El jugador ha interactuado con: " + hitInteractuable.collider.gameObject.name);
-            }
+            } 
         }
     }
 }
