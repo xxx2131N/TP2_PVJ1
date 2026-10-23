@@ -7,9 +7,14 @@ public class movimientoP : MonoBehaviour
     private Vector3 direccion = Vector3.zero;
     private Rigidbody rb;
 
+    [Header("Camara")]
+    [SerializeField] private Transform camara;
+    [SerializeField] private float sensibilidad =100f; 
+
+    private float rotacionX = 0;
     
     [SerializeField] private LayerMask capaSuelo;
-    [SerializeField] private float distanciaSuelo=1f;
+    [SerializeField] private float distanciaSuelo=1.1f;
     private bool estaEnSuelo = false;
 
     [SerializeField] private LayerMask capaInteractuable;
@@ -19,11 +24,24 @@ public class movimientoP : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        float mouseX= Input.GetAxis("Mouse X") * sensibilidad *Time.deltaTime;
+        float mouseY= Input.GetAxis("Mouse Y") * sensibilidad *Time.deltaTime;
+        transform.Rotate(0f,mouseX,0f);
+        rotacionX -= mouseY;
+        rotacionX = Mathf.Clamp(rotacionX, -90,90);
+        if(camara != null)
+        {
+            camara.localRotation = Quaternion.Euler(rotacionX,0,0);
+        }
+
         RaycastHit hitSuelo;
         Debug.DrawRay(transform.position, Vector3.down * distanciaSuelo, Color.red);
 
@@ -41,7 +59,8 @@ public class movimientoP : MonoBehaviour
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Vertical");
 
-        direccion = new Vector3(inputX, 0, inputY);
+        direccion = transform.right* inputX + transform.forward* inputY;
+        direccion.Normalize();
 
         float velocidadadActual = velocidad;
         if (Input.GetKey(KeyCode.LeftShift))
@@ -62,6 +81,18 @@ public class movimientoP : MonoBehaviour
             {
                 Debug.Log("El jugador ha interactuado con: " + hitInteractuable.collider.gameObject.name);
             } 
+        }
+    }
+    private void Interactuar()
+    {
+        RaycastHit hitInteractuable;
+        Debug.DrawRay(camara.position, camara.forward * distanciaInteractuable, Color.red);
+        if(Physics.Raycast(camara.position,camara.forward,out hitInteractuable, distanciaInteractuable, capaInteractuable))
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Debug.Log("se ha interactuado");
+            }
         }
     }
 }

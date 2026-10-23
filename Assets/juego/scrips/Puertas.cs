@@ -9,44 +9,36 @@ public class Puertas : MonoBehaviour
     private int esferasEntregadas = 0;
     private int botonAccionado=0; 
 
-    private void AbrirPuerta1()
+    public void RegistrarBotonPresionado()
     {
-        if (botonAccionado >= 3)
-        {
-            AbrirPuerta1();
-            Debug.Log("¡Puerta 1 abierta!");
-            puerta1.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("Aún no se ha presionado el botón.");
-        }
+        botonAccionado++;
+        Debug.Log("Botón precionado");
+        VerificarCondiciones();
     }
 
-    public void AbrirPuerta2()
+    public void RegistrarEsferaEntregada()
     {
-        if (esferasEntregadas >= 3)
-        {
-            AbrirPuerta2();
-            Debug.Log("¡Puerta 2 abierta!");
-            puerta2.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.Log("Aún no se han entregado las 3 esferas.");
-        }
+        esferasEntregadas++;
+        Debug.Log("Esfera entregada");
+        VerificarCondiciones();
     }
-    private void AbrirPuerta3()
+
+    public void VerificarCondiciones()
     {
-        if (esferasEntregadas >= 3)
+        if(botonAccionado >= 3 && puerta1 != null)
         {
-            AbrirPuerta3();
-            Debug.Log("¡Puerta 3 abierta!");
-            puerta3.gameObject.SetActive(false);
+            puerta1.gameObject.SetActive(false);
+            Debug.Log("Puerta 1 abierta");
         }
-        else
+        if(esferasEntregadas >= 3 && puerta2 != null)
         {
-            Debug.Log("Aún no se han entregado las 3 esferas.");
+            puerta2.gameObject.SetActive(false);
+            Debug.Log("Puerta 2 abierta");
+        }
+        if(esferasEntregadas >= 3 && puerta3 != null)
+        {
+            puerta3.gameObject.SetActive(false);
+            Debug.Log("Puerta 3 abierta");
         }
     }
 }

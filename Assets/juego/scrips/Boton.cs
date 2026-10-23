@@ -2,28 +2,45 @@ using UnityEngine;
 
 public class Boton : MonoBehaviour
 {
-    [SerializeField] private color colorV;
-    [SerializeField] private color colorR;
+    [SerializeField] private Color colorV;
+    [SerializeField] private Color colorR;
     [SerializeField] private bool botonPresionado = false;
+    [SerializeField] private Puertas controladorPuertas;
+
+    private void Start()
+    {
+        cambioColor();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player") && !botonPresionado)
+        {
+            botonPresionado = true;
+            cambioColor();
+            if (controladorPuertas != null)
+            {
+                controladorPuertas.RegistrarBotonPresionado();
+            }
+        }
+    }
 
 
     private void cambioColor()
     {
-        if (botonPresionado)
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
         {
-            GetComponent<Renderer>().material.color = colorV;
+            if (botonPresionado)
+            {
+                renderer.material.color = colorV;
+            }
+            else
+            {
+                renderer.material.color = colorR;
+            }
         }
-        else
-        {
-            GetComponent<Renderer>().material.color = colorR;
-        }
-    }
-
-    private void importarBotonAccionar()
-    {
-        [SerializeField] boton1;
-        [SerializeField] boton2;
-        [SerializeField] boton3;
+        
     }
 
 
