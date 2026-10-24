@@ -6,9 +6,11 @@ public class Boton : MonoBehaviour
     [SerializeField] private Color colorR;
     [SerializeField] private bool botonPresionado = false;
     [SerializeField] private Puertas controladorPuertas;
+    private Renderer objetoRenderer;
 
     private void Start()
     {
+        objetoRenderer = GetComponent<Renderer>();
         cambioColor();
     }
 
@@ -16,13 +18,22 @@ public class Boton : MonoBehaviour
     {
         if (other.CompareTag("Player") && !botonPresionado)
         {
-            botonPresionado = true;
-            cambioColor();
-            if (controladorPuertas != null)
-            {
-                controladorPuertas.RegistrarBotonPresionado();
-            }
+            Activar();
         }
+    }
+    public void Activar()
+    {
+        if (botonPresionado)
+        {
+            return;
+        }
+        botonPresionado= true;
+        cambioColor();
+        if(controladorPuertas != null)
+        {
+            controladorPuertas.RegistrarBotonPresionado();
+        }
+        Debug.Log("activado voton");
     }
 
 

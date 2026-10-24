@@ -41,8 +41,6 @@ public class movimientoP : MonoBehaviour
         {
             camara.localRotation = Quaternion.Euler(rotacionX,0,0);
         }
-
-        RaycastHit hitSuelo;
         Debug.DrawRay(transform.position, Vector3.down * distanciaSuelo, Color.red);
 
         estaEnSuelo = Physics.Raycast(transform.position, Vector3.down, distanciaSuelo, capaSuelo);
@@ -84,15 +82,35 @@ public class movimientoP : MonoBehaviour
         }
     }
     private void Interactuar()
+{
+    if (camara == null)
     {
-        RaycastHit hitInteractuable;
-        Debug.DrawRay(camara.position, camara.forward * distanciaInteractuable, Color.red);
-        if(Physics.Raycast(camara.position,camara.forward,out hitInteractuable, distanciaInteractuable, capaInteractuable))
+        Debug.LogWarning("No asignaste la camara");
+        return;
+    }
+    RaycastHit hit;
+    Debug.DrawRay(
+        camara.position,
+        camara.forward * distanciaInteractuable,
+        Color.red
+    );
+    if (Physics.Raycast(camara.position,camara.forward,out hit,distanciaInteractuable,capaInteractuable))
+    {
+        Debug.Log("Objeto detectado: " + hit.collider.gameObject.name);
+
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            Boton boton = hit.collider.GetComponent<Boton>();
+
+            if (boton != null)
             {
-                Debug.Log("se ha interactuado");
+                boton.Activar();
+            }
+            else
+            {
+                Debug.Log("Detectaste el objeto, pero todavía no tiene una acción asignada");
             }
         }
     }
+}
 }

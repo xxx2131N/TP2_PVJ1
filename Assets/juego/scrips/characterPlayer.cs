@@ -1,28 +1,37 @@
 using UnityEngine;
+using System.Collections;
 
 public class characterPlayer : MonoBehaviour
 {
     private Rigidbody rb;
-
-    [Header("Vida")]
-    [SerializeField] private int vida = 10;
-    [SerializeField] private int dañoRecibido = 2;
+    private GameManager gameManager;
 
     private bool jugadorMuerto = false;
 
+
+    [Header("Interaccion")]
+    [SerializeField] private Transform camara;
+    [SerializeField] private LayerMask capaInteractuable;
+    [SerializeField] private float distanciaInteractuable = 3f;
+
     [Header("Poder")]
-    [SerializeField] private GameObject mano2;
-    [SerializeField] private GameObject mano1;
+    [SerializeField] private float duracionPoder=3f;
+    [SerializeField] private float tiempoRecarga=5f;
 
     private bool visible = true;
+    public bool EstaVisible=> visible;
+    private bool poderDisponible= true;
+    private Renderer[] renderizadoresJugador;
 
     [Header("Ataque")]
+    [SerializeField] private GameObject mano2;
     [SerializeField] private float dañoAtaque = 2f;
-    [SerializeField] private float distanciaAtaque = 0.8f;
+    [SerializeField] private float distanciaAtaque = 2f;
     [SerializeField] private float tiempoAtaque = 1f;
     [SerializeField] private float radioGolpe = 0.5f;
 
-    [SerializeField] private LayerMask capaEnemigo;
+    [Header("Daño recibido")]
+    [SerializeField] private int dañoRecibido = 2;
 
     private Vector3 posicionInicialMano;
 
@@ -34,11 +43,18 @@ public class characterPlayer : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        renderizadoresJugador  = GetComponentsInChildren<Renderer>(true);
+        gameManager= FindObjectOfType<GameManager>();
 
         if (mano2 != null)
         {
             posicionInicialMano = mano2.transform.localPosition;
         }
+        if (gameManager == null)
+        {
+            Debug.LogError("No se encontró el GameManager en la escena.");
+        }
+        
     }
 
     void Update()
@@ -47,6 +63,7 @@ public class characterPlayer : MonoBehaviour
         {
             return;
         }
+        Interactuar();
 
         activarPoder();
         atacarEnemigo();
@@ -54,44 +71,54 @@ public class characterPlayer : MonoBehaviour
 
     private void activarPoder()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q) && poderDisponible)
         {
-            visible = false;
-
-            mano2.SetActive(false);
-            mano1.SetActive(false);
-
+            StartCoroutine(PoderInvisibilidad());
             Debug.Log("PowerUp activado");
         }
+    }
+    public IEnumerator PoderInvisibilidad()
+    {
+        poderDisponible = false;
+        visible = false;
+        CambiarVisibilidad(false);
 
-        if (Input.GetKeyUp(KeyCode.Q))
+        Debug.Log("Invisibilidad activada");
+        yield return new WaitForSeconds(duracionPoder);
+        if (!jugadorMuerto)
         {
             visible = true;
+            CambiarVisibilidad(true);
 
-            mano2.SetActive(true);
-            mano1.SetActive(true);
+            Debug.Log("Invisibilidad desactivada");
+        }
+        yield return new WaitForSeconds(tiempoRecarga);
 
-            Debug.Log("PowerUp desactivado");
+        if (!jugadorMuerto)
+        {
+            poderDisponible = true;
+            Debug.Log("Poder disponible nuevamente");
+        }
+    }
+
+    private void CambiarVisibilidad(bool estado)
+    {
+        foreach (Renderer r in renderizadoresJugador)
+        {
+            if (r != null)
+            {
+                r.enabled = estado;
+            }
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemigo"))
+        if (!collision.gameObject.CompareTag("Enemigo"))
+        return;
+        if (gameManager != null)
         {
-            vida -= dañoRecibido;
-
-            if (vida < 0)
-            {
-                vida = 0;
-            }
-
-            Debug.Log("Vida del jugador: " + vida);
-
-            if (vida <= 0)
-            {
-                Morir();
-            }
+            gameManager.RecibirDano(dañoRecibido);
         }
     }
 
@@ -155,6 +182,33 @@ public class characterPlayer : MonoBehaviour
             }
         }
     }
+    private void Interactuar()
+    {
+        if (camara == null)
+        {
+            return;
+        }
+        float distancia=2f;
+        Vector3 origuen = camara.position;
+        Vector3 direccionRayo= camara.forward;
+        RaycastHit hit;
+        Debug.DrawRay(origuen,direccionRayo*distancia,Color.red);
+        if (Physics.Raycast(camara.position,camara.forward,out hit,distanciaInteractuable,capaInteractuable))
+        {
+            Debug.Log("Objeto detectado: " + hit.collider.gameObject.name);
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                Boton boton = hit.collider.GetComponent<Boton>();
+                if(boton == null) boton= hit.collider.GetComponentInParent<Boton>();
+
+                if (boton != null)
+                {
+                    boton.Activar();
+                }
+            }
+        }
+    }
 
     private void GolpearEnemigo()
     {
@@ -202,36 +256,6 @@ public class characterPlayer : MonoBehaviour
         foreach (Collider c in colisionadores)
         {
             c.enabled = false;
-        }
-    }
-
-    private void OnGUI()
-    {
-        GUI.Box(new Rect(10, 10, 180, 65), "VIDA DEL JUGADOR");
-
-        GUI.Label(
-            new Rect(20, 35, 160, 25),
-            "Vida: " + vida + " / 10"
-        );
-
-        GUI.Box(
-            new Rect(20, 58, 150, 10),
-            ""
-        );
-
-        GUI.Box(
-            new Rect(20, 58, 150f * vida / 10f, 10),
-            ""
-        );
-
-        if (jugadorMuerto)
-        {
-            GUI.Box(
-                new Rect(Screen.width / 2 - 100,
-                         Screen.height / 2 - 30,
-                         200, 60),
-                "GAME OVER"
-            );
         }
     }
 }
