@@ -18,6 +18,9 @@ en este prototipo tiene interacciones con objetos y determinadas puertas para sa
 * **Correr:** Tecla Shift
 * **PowerInvisivilidad:** Tecla Q
 * **Atakar:** mouse derecho
+* **menuinicio:** solo apriete enter
+* ** pause** solo apriete P para pausar el nivel y debuelta P para continuar
+* **derrrota** en este hay que reiniciar todo el nivel pero aun no responde al clic aun
 
 ---
 
@@ -25,7 +28,7 @@ en este prototipo tiene interacciones con objetos y determinadas puertas para sa
 Se implementaron las siguientes 3 técnicas utilizadas:
 
 1. **[interfas de botones]:**
-   * **Explicación:** [los botones estaran en el mapa y el personaje devera acipnarlos mientras los enemigos parruyan ]
+   * **Explicación:** [devera encontrar el verdadero boton para poder havrir la puerta ]
    * **Script:** `Boton.cs`
 
 2. **[llevar un objeto a su destino]:**
@@ -33,11 +36,13 @@ Se implementaron las siguientes 3 técnicas utilizadas:
    * **Script:** `entrega.cs`
 
 3. **[pelea]:**
-   * **Explicación:** .[el player devera eliminar obetivos para continuar]
+   * **Explicación:** .[devera havrirse paso antes multiples enmigos y encontrar el interuptos para pasr la puerta]
    * **Script:** `spawner.cs`
 
 ---
 
 ## Capturas de Pantalla / GIFs
-![Nivel en Ejecución 1](./ruta/a/tu/imagen1.png)
-![Nivel en Ejecución 2](./ruta/a/tu/imagen2.png)
+![Nivel en Ejecución 1](<img width="1279" height="929" alt="Captura de pantalla 2026-10-24 233208" src="https://github.com/user-attachments/assets/1b8d6bfc-9f5c-47fa-91d5-dcf7c9a533f3" />
+)
+![Nivel en Ejecución 2](<img width="1279" height="897" alt="Captura de pantalla 2026-10-24 233151" src="https://github.com/user-attachments/assets/813f1f3a-a8d4-4597-984e-a9356e0dbe01" />
+)
