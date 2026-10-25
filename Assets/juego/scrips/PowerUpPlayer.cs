@@ -17,7 +17,7 @@ public class PowerUpPlayer : MonoBehaviour
     private Renderer[] renderizadoresJugador;
     private Renderer[] renderizadoresMano1;
     private Renderer[] renderizadoresMano2;
-    private void Satar()
+    private void Start()
     {
         renderizadoresJugador = GetComponentsInChildren<Renderer>(true);
         if(mano1 != null) renderizadoresMano1= mano1.GetComponentsInChildren<Renderer>(true);

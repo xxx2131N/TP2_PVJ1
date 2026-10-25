@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeFild] private GameObject enemigo;
+    [SerializeField] private GameObject enemigo;
     private float tiempoCreacion = 4f;
     private int cantidadMaxima=3;
     private int cantidadInvocada=0;
@@ -22,7 +22,7 @@ public class Spawner : MonoBehaviour
     {
         if (cantidadInvocada>= cantidadMaxima)
         return;
-        if(enemigo=null)
+        if(enemigo == null)
         {
             Debug.LogWarning("ubo un errror");
             return;

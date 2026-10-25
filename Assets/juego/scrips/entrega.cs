@@ -2,44 +2,58 @@ using UnityEngine;
 
 public class entrega : MonoBehaviour
 {
-[Header("Punto de entrega")]
-[SerializeField] private Transform puntoColocacion;
+    [Header("Punto de entrega")]
+    [SerializeField] private Transform puntoColocacion;
 
-[Header("Control de puertas")]
-[SerializeField] private Puertas controlPuertas;
-
-private void OnTriggerEnter(Collider other)
-{
-    if (!other.CompareTag("Player")) return;
-
-    agarrarItem jugador = other.GetComponent<agarrarItem>();
-    if (jugador == null) return;
-
-    GameObject esfera = jugador.DropItem();
-    if (esfera == null) return;
-
-    esfera.transform.SetParent(puntoColocacion);
-    esfera.transform.localPosition = Vector3.zero;
-    esfera.transform.localRotation = Quaternion.identity;
-
-    Rigidbody rb = esfera.GetComponent<Rigidbody>();
-    if (rb != null)
+    [Header("puerta")]
+    [SerializeField] private GameObject Puerta;
+    [SerializeField] private float distanciaApertura=3;
+    private bool esferaEntregada= false;
+    private Vector3 posicionInicialPuerta;
+    private void Start()
     {
-        rb.isKinematic = true;
+        if (Puerta!=null)posicionInicialPuerta = Puerta.transform.position;
     }
-
-    Collider col = esfera.GetComponent<Collider>();
-    if (col != null)
+    public bool EntregarEsfera(GameObject objetoEsfera)
     {
-        col.enabled = false;
-    }
+        if (esferaEntregada)
+        {
+            Debug.Log("La esfera ya fue entregada.");
+            return false;
+        }
 
-    if (controlPuertas != null)
+        if (objetoEsfera == null || puntoColocacion == null)
+        {
+            Debug.LogWarning("Asigná el punto de colocación y comprobá la esfera si esta.");
+            return false;
+        }
+        objetoEsfera.transform.SetParent(puntoColocacion);
+        objetoEsfera.transform.localPosition = Vector3.zero;
+        objetoEsfera.transform.localRotation = Quaternion.identity;
+        Rigidbody rb = objetoEsfera.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.linearVelocity = Vector3.zero;
+        }
+
+        Collider col = objetoEsfera.GetComponent<Collider>();
+
+        if (col != null) col.enabled = false;
+        esferaEntregada = true;
+        AbrirPuerta();
+        Debug.Log("¡Esfera entregada!");
+        return true;
+    }
+    private void AbrirPuerta()
     {
-        controlPuertas.RegistrarEsferaEntregada();
+        if (Puerta == null)
+        {
+            Debug.LogWarning("No asignaste la puerta de entrega.");
+            return;
+        }
+        Puerta.transform.position = posicionInicialPuerta + Vector3.down * distanciaApertura;
+        Debug.Log("¡Puerta de entrega abierta!");
     }
-
-    Debug.Log("¡Esfera entregada!");
-}
-
 }

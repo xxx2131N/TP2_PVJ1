@@ -96,8 +96,7 @@ public class EnemigoIA : MonoBehaviour
 
     private bool PuedeVerJugador()
     {
-        if (controladorJugador != null &&
-            !controladorJugador.EstaVisible)
+        if (controladorJugador != null && !controladorJugador.EstaVisible)
         {
             return false;
         }
