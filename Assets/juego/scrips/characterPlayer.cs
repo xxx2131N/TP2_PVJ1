@@ -26,7 +26,7 @@ public class characterPlayer : MonoBehaviour
     private float tiempoActual = 0f;
 
     public int Puntaje => almacenarPuntaje;
-    public int VidaJugador => vidaJugador;
+    public int VidaJugador => gameManager != null? gameManager.VidaActual:vidaJugador;
     public bool JugadorMuerto => jugadorMuerto;
     public bool EstaVisible => powerUp == null || powerUp.EstaVisible;
 
@@ -104,12 +104,26 @@ public class characterPlayer : MonoBehaviour
     }
     public void RecibirDaño(int cantidad)
     {
-        if (jugadorMuerto) return;
-        vidaJugador -= cantidad;
-        Debug.Log("Vida del jugador: " + vidaJugador);
-        if (vidaJugador <= 0)
+        if (jugadorMuerto || cantidad <= 0) return;
+        if (gameManager != null)
         {
-            Morir();
+            gameManager.RecibirDano(cantidad);
+            if (gameManager.VidaActual <= 0)
+            {
+                Morir();
+            }
+        }
+        else
+        {
+            vidaJugador -= cantidad;
+            vidaJugador = Mathf.Max(0, vidaJugador);
+
+            Debug.Log("Vida del jugador: " + vidaJugador);
+
+            if (vidaJugador <= 0)
+            {
+                Morir();
+            }
         }
     }
     public void RecibirDano(int cantidad)
@@ -118,8 +132,16 @@ public class characterPlayer : MonoBehaviour
     }
     public void SumarPuntaje(int cantidad)
     {
-        almacenarPuntaje += cantidad;
-        Debug.Log("Puntaje actual: " + Puntaje);
+        if (jugadorMuerto || cantidad <= 0) return;         
+        if (gameManager != null)
+        {
+            gameManager.SumarPuntos(cantidad);
+        }
+        else
+        {
+           almacenarPuntaje += cantidad;
+           Debug.Log("Puntaje actual: " + almacenarPuntaje);
+        }
     }
     private void Morir()
     {
